@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ドクターナウ｜いちばん近くの医師が、すぐに駆けつける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C2733;
+    --ink-2:#11323F;
+    --surface:#FFFFFF;
+    --paper:#F4F7F7;
+    --teal:#0E9C92;
+    --teal-deep:#0A6F68;
+    --signal:#FF6A4D;
+    --signal-soft:#FFE9E3;
+    --line:#DCE6E6;
+    --text:#0C2733;
+    --muted:#5B7077;
+    --serif:"Noto Serif JP", serif;
+    --sans:"Noto Sans JP", system-ui, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:var(--surface);
+    line-height:1.8;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.5;letter-spacing:.01em;margin:0;}
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;}
+
+  .wrap{width:100%;max-width:1080px;margin:0 auto;padding:0 22px;}
+
+  /* ---------- ヘッダー ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(12,39,51,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px;color:#fff;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:1.15rem;letter-spacing:.02em;}
+  .brand .dot{
+    width:12px;height:12px;border-radius:50%;background:var(--signal);
+    box-shadow:0 0 0 0 rgba(255,106,77,.6);
+    animation:beat 2s infinite;
+  }
+  @keyframes beat{
+    0%{box-shadow:0 0 0 0 rgba(255,106,77,.55);}
+    70%{box-shadow:0 0 0 12px rgba(255,106,77,0);}
+    100%{box-shadow:0 0 0 0 rgba(255,106,77,0);}
+  }
+  .nav-links{display:flex;gap:26px;font-size:.9rem;color:#cfe0e0;}
+  .nav-links a:hover{color:#fff;}
+  .nav .cta-mini{
+    background:var(--signal);color:#fff;padding:9px 16px;border-radius:999px;
+    font-size:.85rem;font-weight:700;
+  }
+  @media(max-width:760px){ .nav-links{display:none;} }
+
+  /* ---------- ヒーロー ---------- */
+  .hero{
+    position:relative;overflow:hidden;
+    background:radial-gradient(120% 120% at 70% 0%, #14414f 0%, var(--ink) 55%);
+    color:#fff;padding:64px 0 72px;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.78rem;letter-spacing:.18em;color:#8fd4cd;
+    text-transform:uppercase;margin-bottom:22px;font-weight:700;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:#8fd4cd;}
+  .hero h1{font-size:clamp(2rem,5.4vw,3.3rem);line-height:1.4;}
+  .hero h1 .hl{color:var(--signal);}
+  .hero .lead{margin-top:22px;color:#cfe0e0;font-size:1.02rem;max-width:30em;}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    padding:15px 26px;border-radius:999px;font-weight:700;font-size:1rem;
+    border:none;cursor:pointer;font-family:var(--sans);transition:transform .12s ease, box-shadow .2s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-sos{background:var(--signal);color:#fff;box-shadow:0 10px 30px -8px rgba(255,106,77,.7);}
+  .btn-sos:hover{box-shadow:0 14px 34px -8px rgba(255,106,77,.85);}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4);}
+  .btn-ghost:hover{border-color:#fff;}
+
+  /* レーダー（シグネチャー） */
+  .radar-stage{display:flex;justify-content:center;align-items:center;}
+  .radar{
+    position:relative;width:280px;height:280px;border-radius:50%;
+    background:radial-gradient(circle, rgba(14,156,146,.18) 0%, rgba(12,39,51,0) 70%);
+  }
+  .ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(143,212,205,.35);}
+  .ring.r2{inset:38px;} .ring.r3{inset:78px;} .ring.r4{inset:118px;}
+  .pulse{
+    position:absolute;inset:0;border-radius:50%;border:2px solid var(--signal);
+    opacity:0;animation:radar 3.2s infinite ease-out;
+  }
+  .pulse.d2{animation-delay:1.6s;}
+  @keyframes radar{
+    0%{transform:scale(.18);opacity:.9;}
+    80%{opacity:0;}
+    100%{transform:scale(1);opacity:0;}
+  }
+  .center-pin,.doc-pin{position:absolute;display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .center-pin{top:50%;left:50%;transform:translate(-50%,-50%);}
+  .center-pin .core{
+    width:18px;height:18px;border-radius:50%;background:var(--signal);
+    box-shadow:0 0 0 6px rgba(255,106,77,.25);
+  }
+  .center-pin span{font-size:.72rem;color:#fff;}
+  .doc-pin{font-size:.7rem;color:#9fe6df;}
+  .doc-pin .glyph{
+    width:30px;height:30px;border-radius:9px;background:rgba(14,156,146,.9);
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.8rem;
+    box-shadow:0 6px 16px -4px rgba(0,0,0,.5);
+  }
+  .doc-pin.p1{top:30px;left:48px;} .doc-pin.p2{bottom:40px;right:36px;} .doc-pin.p3{top:96px;right:18px;}
+
+  @media(max-width:860px){
+    .hero-grid{grid-template-columns:1fr;gap:18px;}
+    .radar-stage{order:-1;}
+    .radar{width:230px;height:230px;}
+    .ring.r2{inset:30px;}.ring.r3{inset:64px;}.ring.r4{inset:96px;}
+    .doc-pin.p1{top:18px;left:34px;}.doc-pin.p3{top:72px;right:8px;}
+  }
+
+  /* ---------- セクション共通 ---------- */
+  section{padding:78px 0;}
+  .sec-head{max-width:34em;margin-bottom:48px;}
+  .label{font-size:.76rem;letter-spacing:.18em;color:var(--teal-deep);font-weight:700;text-transform:uppercase;}
+  .sec-head h2{font-size:clamp(1.6rem,3.6vw,2.3rem);margin-top:14px;}
+  .sec-head p{margin-top:16px;color:var(--muted);}
+
+  .paper{background:var(--paper);}
+
+  /* 緊急フロー ステップ */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px 24px;}
+  .step .num{font-family:var(--serif);font-size:.95rem;color:var(--signal);font-weight:700;letter-spacing:.1em;}
+  .step h3{font-size:1.15rem;margin:10px 0 10px;}
+  .step p{color:var(--muted);font-size:.95rem;}
+  @media(max-width:760px){ .steps{grid-template-columns:1fr;} }
+
+  /* 機能カード */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 28px;
+    transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .card:hover{box-shadow:0 18px 40px -22px rgba(12,39,51,.35);transform:translateY(-3px);}
+  .card .ic{
+    width:48px;height:48px;border-radius:13px;background:var(--signal-soft);
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  }
+  .card .ic svg{width:24px;height:24px;stroke:var(--signal);fill:none;stroke-width:1.8;}
+  .card h3{font-size:1.2rem;margin-bottom:10px;}
+  .card p{color:var(--muted);font-size:.96rem;}
+  @media(max-width:760px){ .cards{grid-template-columns:1fr;} }
+
+  /* 医師向け（ダーク） */
+  .dark{background:var(--ink);color:#fff;}
+  .dark .sec-head p{color:#b3cccb;}
+  .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center;}
+  .doc-points{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:18px;}
+  .doc-points li{display:flex;gap:14px;align-items:flex-start;color:#d7e6e5;}
+  .doc-points .tick{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(14,156,146,.25);
+    display:flex;align-items:center;justify-content:center;color:#6fe3d8;font-weight:700;font-size:.85rem;margin-top:2px;
+  }
+  .reward-card{
+    background:linear-gradient(160deg, var(--teal) 0%, var(--teal-deep) 100%);
+    border-radius:22px;padding:34px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6);
+  }
+  .reward-card .small{font-size:.85rem;color:#d7f3f0;letter-spacing:.08em;}
+  .reward-card .big{font-family:var(--serif);font-size:2.6rem;font-weight:700;margin:6px 0;}
+  .reward-card .gps{
+    margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.25);
+    display:flex;align-items:center;gap:12px;font-size:.92rem;color:#eafdfb;
+  }
+  .gps-dot{width:11px;height:11px;border-radius:50%;background:#7dffb0;box-shadow:0 0 10px #7dffb0;}
+  @media(max-width:760px){ .doc-grid{grid-template-columns:1fr;gap:30px;} }
+
+  /* 料金 */
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .plan{border:1px solid var(--line);border-radius:20px;padding:34px 30px;background:#fff;}
+  .plan.feature{border:2px solid var(--teal);position:relative;}
+  .plan .tag{
+    position:absolute;top:-13px;left:30px;background:var(--teal);color:#fff;
+    font-size:.74rem;font-weight:700;padding:5px 14px;border-radius:999px;letter-spacing:.05em;
+  }
+  .plan h3{font-size:1.25rem;}
+  .plan .price{font-family:var(--serif);font-size:2.2rem;font-weight:700;margin:14px 0 4px;}
+  .plan .price small{font-size:.95rem;font-weight:400;color:var(--muted);font-family:var(--sans);}
+  .plan ul{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px;}
+  .plan li{display:flex;gap:10px;color:#33474d;font-size:.95rem;}
+  .plan li::before{content:"✓";color:var(--teal);font-weight:700;}
+  @media(max-width:760px){ .plans{grid-template-columns:1fr;} }
+
+  /* 法令遵守 */
+  .legal{background:var(--paper);}
+  .legal-box{
+    background:#fff;border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:14px;padding:30px 30px;color:var(--muted);font-size:.95rem;
+  }
+  .legal-box h3{color:var(--text);font-size:1.15rem;margin-bottom:14px;}
+  .legal-box ul{margin:0;padding-left:20px;display:grid;gap:8px;}
+
+  /* CTA */
+  .final{
+    background:radial-gradient(120% 120% at 30% 0%, #14414f 0%, var(--ink) 60%);
+    color:#fff;text-align:center;
+  }
+  .final h2{font-size:clamp(1.7rem,4vw,2.5rem);}
+  .final p{color:#cfe0e0;margin:18px auto 0;max-width:30em;}
+  .final .hero-cta{justify-content:center;}
+
+  footer{background:var(--ink-2);color:#9fb6b9;padding:40px 0;font-size:.85rem;}
+  .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center;}
+  .disclaimer{margin-top:18px;font-size:.78rem;color:#6d8589;line-height:1.7;}
+
+  /* ---------- 緊急デモ オーバーレイ ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:80;display:none;
+    background:rgba(8,26,34,.78);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    width:100%;max-width:380px;background:#fff;border-radius:24px;
+    padding:34px 28px;text-align:center;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);
+  }
+  .modal .scanner{
+    width:120px;height:120px;border-radius:50%;margin:6px auto 22px;position:relative;
+    background:radial-gradient(circle, rgba(14,156,146,.16), transparent 70%);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .scanner .ping{position:absolute;inset:0;border-radius:50%;border:2px solid var(--teal);opacity:0;animation:radar 2s infinite ease-out;}
+  .scanner .ping.b{animation-delay:1s;}
+  .scanner .heart{font-size:2rem;color:var(--signal);animation:beat 1.4s infinite;}
+  .modal h3{font-size:1.25rem;margin-bottom:10px;}
+  .modal p.state{color:var(--muted);min-height:3.4em;}
+  .result{display:none;text-align:left;border-top:1px solid var(--line);margin-top:18px;padding-top:18px;}
+  .result.show{display:block;}
+  .result .line{display:flex;justify-content:space-between;padding:7px 0;font-size:.95rem;}
+  .result .line span:first-child{color:var(--muted);}
+  .result .line span:last-child{font-weight:700;}
+  .result .eta{color:var(--signal);}
+  .modal .close{
+    margin-top:22px;width:100%;padding:13px;border-radius:999px;border:none;cursor:pointer;
+    background:var(--ink);color:#fff;font-weight:700;font-family:var(--sans);font-size:.95rem;
+  }
+  .demo-note{font-size:.74rem;color:var(--muted);margin-top:14px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand"><span class="dot"></span>ドクターナウ</div>
+    <nav class="nav-links">
+      <a href="#flow">緊急時のながれ</a>
+      <a href="#features">できること</a>
+      <a href="#doctor">医師の方へ</a>
+      <a href="#price">料金</a>
+    </nav>
+    <a href="#price" class="cta-mini">はじめる</a>
+  </div>
+</header>
+
+<!-- ヒーロー -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">緊急時の医師オンデマンド</span>
+      <h1>「この中に、<br><span class="hl">お医者様はいませんか？</span>」<br>もう、探し回らない。</h1>
+      <p class="lead">街なか、職場、旅先。いざという時、いちばん近くにいる登録医師を地図上で見つけ出し、最短で駆けつけてもらえます。普段は、自宅からのオンライン診療にも。</p>
+      <div class="hero-cta">
+        <button class="btn btn-sos" id="sosBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          緊急で医師を呼ぶ
+        </button>
+        <a href="#doctor" class="btn btn-ghost">医師として登録する</a>
+      </div>
+    </div>
+    <div class="radar-stage">
+      <div class="radar" aria-hidden="true">
+        <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div>
+        <div class="pulse"></div><div class="pulse d2"></div>
+        <div class="doc-pin p1"><span class="glyph">医</span>0.8km</div>
+        <div class="doc-pin p2"><span class="glyph">医</span>1.4km</div>
+        <div class="doc-pin p3"><span class="glyph">医</span>2.1km</div>
+        <div class="center-pin"><span class="core"></span><span>あなた</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 緊急時のながれ -->
+<section id="flow" class="paper">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="label">Emergency Flow</span>
+      <h2>呼ぶ。見つかる。駆けつける。</h2>
+      <p>119番が必要な重症はもちろん救急へ。ドクターナウは「救急車を呼ぶほどではないけれど、今すぐ医師に診てほしい」場面をうめます。</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">STEP 01</div>
+        <h3>ボタンを押す</h3>
+        <p>アプリで「医師を呼ぶ」を押すと、あなたの現在地（GPS）と症状の概要が送られます。</p>
+      </div>
+      <div class="step">
+        <div class="num">STEP 02</div>
+        <h3>近くの医師が見つかる</h3>
+        <p>GPSをオンにして待機している登録医師の中から、いちばん近い医師を自動でマッチング。到着予定時間が表示されます。</p>
+      </div>
+      <div class="step">
+        <div class="num">STEP 03</div>
+        <h3>駆けつけ・連携</h3>
+        <p>医師が現場へ。必要に応じて近隣の病院や救急とも連携し、その後の受診先までご案内します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- できること -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="label">Services</span>
+      <h2>緊急のときも、ふだんの体調も。</h2>
+      <p>駆けつけだけでなく、自宅からのオンライン診療、お薬の受け取りまで。ひとつのアプリで完結します。</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg></div>
+        <h3>オンライン診療</h3>
+        <p>外出が難しいときや、ちょっとした不調のときに。スマホのビデオ通話で、登録医師の診察を受けられます。</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M10 2v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V2"/><path d="M8 2h8"/></svg></div>
+        <h3>処方箋・薬局連携</h3>
+        <p>診察でお薬が必要になれば、電子処方箋を発行。近くの提携薬局でそのまま受け取れます。</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="1" y="6" width="15" height="12" rx="1.5"/><path d="M16 9h4l3 3v6h-7"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
+        <h3>お薬の配送</h3>
+        <p>受け取りに行けないときは、オンライン服薬指導のうえ、ご自宅への配送にも対応します（法令の範囲内）。</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/><path d="M12 9v4M10 11h4"/></svg></div>
+        <h3>近隣病院ネットワーク</h3>
+        <p>提携する近隣の病院・クリニックの情報を提供。医師と病院がスムーズに連携し、次の受診先につなぎます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 医師の方へ -->
+<section id="doctor" class="dark">
+  <div class="wrap">
+    <div class="doc-grid">
+      <div>
+        <span class="label" style="color:#6fe3d8;">For Doctors</span>
+        <h2 style="margin-top:14px;font-size:clamp(1.6rem,3.6vw,2.3rem);">あなたの「待機」が、<br>そのまま収入になる。</h2>
+        <ul class="doc-points">
+          <li><span class="tick">¥</span><div><b>月額の固定報酬</b>。登録いただくと、毎月の報酬をお支払いします。</div></li>
+          <li><span class="tick">◷</span><div><b>GPSをオンにした時間だけ報酬が発生。</b> 動ける時だけ待機すればOK。スキマ時間を活かせます。</div></li>
+          <li><span class="tick">◎</span><div><b>駆けつけ・オンライン診療を自由に選択。</b> 対応できる範囲だけ引き受けられます。</div></li>
+        </ul>
+      </div>
+      <div class="reward-card">
+        <div class="small">GPS待機の報酬イメージ</div>
+        <div class="big">¥﹣﹣﹣<span style="font-size:1rem;">／月</span></div>
+        <div class="small">待機時間に応じて加算。金額はデモ表示です。</div>
+        <div class="gps"><span class="gps-dot"></span>位置情報オン＝待機中（報酬カウント中）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 料金 -->
+<section id="price" class="paper">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="label">Plan</span>
+      <h2>もしもの安心を、月額で。</h2>
+      <p>家族みんなの「いざ」に備えるサブスクリプション。金額はコンセプト上の参考表示です。</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>スタンダード</h3>
+        <div class="price">¥﹣,﹣﹣﹣<small> ／月</small></div>
+        <ul>
+          <li>オンライン診療 使い放題</li>
+          <li>処方箋発行・薬局連携</li>
+          <li>近隣病院ネットワーク</li>
+        </ul>
+      </div>
+      <div class="plan feature">
+        <span class="tag">いざという時に</span>
+        <h3>駆けつけプラス</h3>
+        <div class="price">¥﹣,﹣﹣﹣<small> ／月</small></div>
+        <ul>
+          <li>スタンダードのすべて</li>
+          <li>緊急時の医師駆けつけ要請</li>
+          <li>家族アカウント対応</li>
+          <li>お薬の自宅配送</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 法令遵守 -->
+<section class="legal">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="label">Compliance</span>
+      <h2>守るべきルールの中で。</h2>
+    </div>
+    <div class="legal-box">
+      <h3>このサービスが関わる主な法令・許認可</h3>
+      <ul>
+        <li><b>有料職業紹介事業の許可</b>（厚生労働省）— 医師の紹介・マッチングを行う場合に必要です。</li>
+        <li><b>オンライン診療の指針</b>（厚労省ガイドライン）— 診療できる範囲・初診の扱い・本人確認などのルール遵守が前提です。</li>
+        <li><b>電子処方箋／オンライン服薬指導</b> — 処方・薬の配送には、薬剤師による服薬指導など所定の手続きが必要です。</li>
+        <li><b>応召義務・医師法、賠償責任、救急との役割分担</b> — とくに「駆けつけ」は医療現場・法務の慎重な確認が要る領域です。</li>
+      </ul>
+      <p style="margin-top:16px;">※ 本サイトは事業コンセプトを示すデモであり、現時点で許認可を取得済みの医療サービスではありません。実際の運用前に、弁護士・行政書士・所管官庁への確認が必要です。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 最終CTA -->
+<section class="final">
+  <div class="wrap">
+    <h2>「もしも」に、いちばん近い医師を。</h2>
+    <p>緊急の駆けつけから、ふだんのオンライン診療まで。ドクターナウで、医療をもっと近くに。</p>
+    <div class="hero-cta">
+      <button class="btn btn-sos" onclick="openDemo()">緊急で医師を呼ぶ（デモ）</button>
+      <a href="#doctor" class="btn btn-ghost">医師として登録する</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="brand" style="color:#fff;"><span class="dot"></span>ドクターナウ</div>
+      <div>緊急時のながれ・できること・医師の方へ・料金</div>
+    </div>
+    <p class="disclaimer">本ウェブサイトはサービス構想を伝えるためのデモ用ページです。表示の金額・到着時間・医師情報はすべてサンプルであり、実在のものではありません。重い症状・命に関わる緊急時は、ためらわず119番（救急）に通報してください。</p>
+  </div>
+</footer>
+
+<!-- 緊急デモ オーバーレイ -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="医師を呼ぶデモ">
+  <div class="modal">
+    <div class="scanner"><div class="ping"></div><div class="ping b"></div><div class="heart">♥</div></div>
+    <h3 id="modalTitle">医師を呼んでいます</h3>
+    <p class="state" id="modalState">現在地を確認しています…</p>
+    <div class="result" id="result">
+      <div class="line"><span>担当医師</span><span>内科／総合診療　医師</span></div>
+      <div class="line"><span>距離</span><span>約 0.8km</span></div>
+      <div class="line"><span>到着予定</span><span class="eta">約 6分</span></div>
+    </div>
+    <button class="close" onclick="closeDemo()">閉じる</button>
+    <p class="demo-note">※ これはデモ表示です。実際の通報・配車は行われません。</p>
+  </div>
+</div>
+
+<script>
+  var timers = [];
+  function openDemo(){
+    var ov = document.getElementById('overlay');
+    var st = document.getElementById('modalState');
+    var rs = document.getElementById('result');
+    var tt = document.getElementById('modalTitle');
+    ov.classList.add('show');
+    rs.classList.remove('show');
+    tt.textContent = '医師を呼んでいます';
+    st.textContent = '現在地を確認しています…';
+    timers.forEach(clearTimeout); timers = [];
+    timers.push(setTimeout(function(){ st.textContent = '近くで待機している登録医師を探しています…'; }, 1400));
+    timers.push(setTimeout(function(){ st.textContent = 'いちばん近い医師に要請を送っています…'; }, 2900));
+    timers.push(setTimeout(function(){
+      tt.textContent = '医師が見つかりました';
+      st.textContent = 'まもなく向かいます。その場で待っていてください。';
+      rs.classList.add('show');
+    }, 4300));
+  }
+  function closeDemo(){
+    document.getElementById('overlay').classList.remove('show');
+    timers.forEach(clearTimeout); timers = [];
+  }
+  document.getElementById('sosBtn').addEventListener('click', openDemo);
+  document.getElementById('overlay').addEventListener('click', function(e){
+    if(e.target === this) closeDemo();
+  });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDemo(); });
+</script>
+</body>
+</html>
